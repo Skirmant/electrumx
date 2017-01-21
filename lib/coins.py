@@ -490,3 +490,25 @@ class DigiByteTestnet(DigiByte):
     IRC_CHANNEL = "#electrum-dgb"
     RPC_PORT = 15022
     REORG_LIMIT = 2000
+
+
+class TrumpCoin(Coin):
+    NAME = "TrumpCoin"
+    SHORTNAME = "TRUMP"
+    NET = "mainnet"
+    XPUB_VERBYTES = bytes.fromhex("0488b21e")
+    XPRV_VERBYTES = bytes.fromhex("0488ade4")
+    P2PKH_VERBYTE = 0x41
+    P2SH_VERBYTE = 0x05
+    WIF_BYTE = 0xe0
+    GENESIS_HASH=('00004d19d2a6527d0e687d0c3bb4b4fa'
+                  '23c8727ce1e7290e5ca5d72372580e65')
+    IRC_PREFIX = "T_"
+    IRC_CHANNEL = "#electrum-trump"
+    RPC_PORT = 8332
+
+    @classmethod
+    def header_hash(cls, header):
+        '''Given a header return the hash.'''
+        import litecoin_scrypt
+        return litecoin_scrypt.getPoWHash(header)
