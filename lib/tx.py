@@ -7,7 +7,6 @@
 
 '''Transaction-related classes and functions.'''
 
-
 from collections import namedtuple
 from struct import unpack_from
 
@@ -15,7 +14,7 @@ from lib.util import cachedproperty
 from lib.hash import double_sha256, hash_to_str
 
 
-class Tx(namedtuple("Tx", "version inputs outputs locktime")):
+class Tx(namedtuple("Tx", "version postime inputs outputs locktime")):
     '''Class representing a transaction.'''
 
     @cachedproperty
@@ -80,6 +79,7 @@ class Deserializer(object):
         start = self.cursor
         return Tx(
             self._read_le_int32(),  # version
+            self._read_le_int32(),  # postime
             self._read_inputs(),    # inputs
             self._read_outputs(),   # outputs
             self._read_le_uint32()  # locktime
@@ -89,6 +89,7 @@ class Deserializer(object):
         '''Returns a list of (deserialized_tx, tx_hash) pairs.'''
         read_tx = self.read_tx
         txs = [read_tx() for n in range(self._read_varint())]
+        if len(self.binary) > self.cursor: self._read_varbytes()
         assert self.cursor == len(self.binary)
         return txs
 
